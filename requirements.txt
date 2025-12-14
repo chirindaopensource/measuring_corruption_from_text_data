@@ -1,0 +1,210 @@
+﻿# =============================================================================
+# requirements.txt
+# =============================================================================
+# Python Package Dependencies for:
+# "Automated Quantification of Institutional Quality"
+#
+# Based on: Muço, A. (2025). Measuring Corruption from Text Data.
+# arXiv:2512.09652
+#
+# This file specifies all required packages with pinned versions to ensure
+# reproducibility across development, testing, and production environments.
+#
+# Installation:
+#   pip install -r requirements.txt
+#
+# Python Version Requirement: >=3.8,<3.13
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core Scientific Computing Stack
+# -----------------------------------------------------------------------------
+# NumPy: Fundamental package for numerical operations, linear algebra,
+# matrix operations, eigendecomposition, and array manipulations required
+# for PCA implementation and vector space modeling
+numpy>=1.24.0,<2.0.0
+
+# Pandas: Data manipulation and analysis library for DataFrame operations,
+# merging datasets (fuzzy joins, IBGE municipal code alignment), time series
+# handling, and structured data wrangling
+pandas>=2.0.0,<3.0.0
+
+# -----------------------------------------------------------------------------
+# Natural Language Processing (NLP) & Computational Linguistics
+# -----------------------------------------------------------------------------
+# NLTK: Natural Language Toolkit for tokenization, stopword removal,
+# stemming (Porter Stemmer), corpus management, and n-gram generation
+nltk>=3.8.0,<4.0.0
+
+# SpaCy: Industrial-strength NLP library for advanced linguistic features,
+# dependency parsing, named entity recognition, and morphological analysis
+# (Note: Language models must be downloaded separately via:
+# python -m spacy download pt_core_news_sm)
+spacy>=3.7.0,<4.0.0
+
+# Gensim: Topic modeling and vector space modeling library for TF-IDF
+# computation, Word2Vec embeddings, and semantic similarity calculations
+gensim>=4.3.0,<5.0.0
+
+# -----------------------------------------------------------------------------
+# Machine Learning & Classification
+# -----------------------------------------------------------------------------
+# scikit-learn: Comprehensive machine learning library providing:
+# - TfidfVectorizer for feature engineering
+# - LogisticRegression for binary/multiclass classification
+# - MultinomialNB for Naive Bayes probabilistic classification
+# - LinearSVC for Support Vector Machine with linear kernel
+# - classification_report for precision, recall, F1-score computation
+# - Cross-validation utilities and model evaluation metrics
+scikit-learn>=1.3.0,<2.0.0
+
+# -----------------------------------------------------------------------------
+# Statistical Modeling & Econometrics
+# -----------------------------------------------------------------------------
+# statsmodels: Statistical modeling library for:
+# - OLS regression (Ordinary Least Squares)
+# - Fixed effects estimation (LSDV, within estimators)
+# - Heteroskedasticity-robust standard errors (HC1, HC3)
+# - Hypothesis testing (t-statistics, p-values, confidence intervals)
+# - Model diagnostics and specification tests
+statsmodels>=0.14.0,<1.0.0
+
+# SciPy: Scientific computing library for:
+# - Advanced statistical functions
+# - Optimization routines
+# - Sparse matrix operations
+# - Special functions (complementing NumPy)
+scipy>=1.11.0,<2.0.0
+
+# -----------------------------------------------------------------------------
+# PDF Processing & Document Parsing
+# -----------------------------------------------------------------------------
+# PyPDF2: Pure-Python library for PDF manipulation, metadata extraction,
+# DOM traversal, and programmatic access to PDF object models
+# (Note: For production OCR pipelines, consider pypdf>=3.0.0 as PyPDF2
+# is in maintenance mode)
+PyPDF2>=3.0.0,<4.0.0
+
+# pdfplumber: Advanced PDF parsing with table extraction, text positioning,
+# and layout analysis capabilities (recommended alternative/supplement to PyPDF2)
+pdfplumber>=0.10.0,<1.0.0
+
+# pytesseract: Python wrapper for Tesseract OCR engine, enabling conversion
+# of scanned documents and images to machine-readable text
+# (Requires Tesseract binary installation: apt-get install tesseract-ocr)
+pytesseract>=0.3.10,<1.0.0
+
+# Pillow: Python Imaging Library (PIL fork) for image preprocessing,
+# format conversion, and enhancement prior to OCR processing
+Pillow>=10.0.0,<11.0.0
+
+# -----------------------------------------------------------------------------
+# Text Preprocessing & Unicode Normalization
+# -----------------------------------------------------------------------------
+# unidecode: ASCII transliteration library for diacritic stripping and
+# Unicode normalization (alternative to unicodedata standard library)
+unidecode>=1.3.6,<2.0.0
+
+# -----------------------------------------------------------------------------
+# Data Validation & Type Checking
+# -----------------------------------------------------------------------------
+# pydantic: Data validation library using Python type annotations,
+# providing runtime type checking and data class functionality
+# (Note: dataclasses from standard library are used in the codebase,
+# but pydantic offers enhanced validation for production systems)
+pydantic>=2.0.0,<3.0.0
+
+# -----------------------------------------------------------------------------
+# Logging & Configuration Management
+# -----------------------------------------------------------------------------
+# python-dotenv: Environment variable management for configuration
+# externalization and secure credential handling
+python-dotenv>=1.0.0,<2.0.0
+
+# PyYAML: YAML parser for configuration file management and
+# structured parameter specification
+PyYAML>=6.0.0,<7.0.0
+
+# -----------------------------------------------------------------------------
+# Utilities & Auxiliary Libraries
+# -----------------------------------------------------------------------------
+# tqdm: Progress bar library for monitoring long-running iterative processes
+# (LOO cross-validation, batch document processing)
+tqdm>=4.66.0,<5.0.0
+
+# joblib: Efficient serialization and parallel computing library for
+# model persistence and multi-core processing
+joblib>=1.3.0,<2.0.0
+
+# requests: HTTP library for API calls and web scraping (if downloading
+# external datasets like IBGE municipal codes)
+requests>=2.31.0,<3.0.0
+
+# -----------------------------------------------------------------------------
+# Development & Testing (Optional - Comment out for minimal production install)
+# -----------------------------------------------------------------------------
+# pytest: Testing framework for unit tests, integration tests, and
+# regression test suites
+# pytest>=7.4.0,<8.0.0
+
+# pytest-cov: Code coverage plugin for pytest to ensure comprehensive
+# test coverage of text processing and statistical modules
+# pytest-cov>=4.1.0,<5.0.0
+
+# black: Uncompromising code formatter for PEP-8 compliance
+# black>=23.7.0,<24.0.0
+
+# flake8: Linting tool for style guide enforcement and code quality checks
+# flake8>=6.1.0,<7.0.0
+
+# mypy: Static type checker for Python type hint validation
+# mypy>=1.5.0,<2.0.0
+
+# ipython: Enhanced interactive Python shell for exploratory data analysis
+# ipython>=8.14.0,<9.0.0
+
+# jupyter: Notebook interface for prototyping and result visualization
+# jupyter>=1.0.0,<2.0.0
+
+# matplotlib: Plotting library for data visualization (scree plots, validation charts)
+# matplotlib>=3.7.0,<4.0.0
+
+# seaborn: Statistical data visualization based on matplotlib
+# seaborn>=0.12.0,<1.0.0
+
+# =============================================================================
+# Post-Installation Steps
+# =============================================================================
+# After installing requirements, run the following commands:
+#
+# 1. Download NLTK data:
+#    python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
+#
+# 2. Download SpaCy Portuguese language model:
+#    python -m spacy download pt_core_news_sm
+#
+# 3. Install Tesseract OCR (system-level dependency):
+#    Ubuntu/Debian: sudo apt-get install tesseract-ocr tesseract-ocr-por
+#    macOS: brew install tesseract tesseract-lang
+#    Windows: Download installer from https://github.com/UB-Mannheim/tesseract/wiki
+#
+# 4. Verify installation:
+#    python -c "import numpy, pandas, nltk, sklearn, statsmodels; print('OK')"
+# =============================================================================
+
+# =============================================================================
+# Version Control & Reproducibility Notes
+# =============================================================================
+# This requirements file uses semantic versioning constraints:
+# - Major version pinned to prevent breaking changes
+# - Minor/patch versions allowed for bug fixes and security updates
+#
+# To generate an exact lock file for absolute reproducibility:
+#   pip freeze > requirements-lock.txt
+#
+# To check for outdated packages:
+#   pip list --outdated
+#
+# To upgrade within constraints:
+#   pip install --upgrade -r requirements.txt
+# =============================================================================
