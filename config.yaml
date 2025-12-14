@@ -1,0 +1,168 @@
+﻿# =========================================================================
+# SECTION 1: PIPELINE PARAMETERS (NON-DATA INPUTS)
+# =========================================================================
+pipeline_parameters:
+
+  # 1.1 PARSING & EXTRACTION LOGIC
+  parsing_config:
+    # Reports >= 8 have front-page summaries (Section 2; Appendix A1.1)
+    lottery_cutoff: 8
+
+    # Delimiter-based extraction for early reports (Appendix A1.3)
+    regex_start_marker: "Constatação da Fiscalização"
+    # Include accented and unaccented variants; extraction should be preceded
+    # by accent normalization OR include both forms here.
+    regex_end_markers:
+      - "Fato"
+      - "Evidência"
+      - "Evidencia"
+
+    # Regex behavior (multiline extraction)
+    regex_flags:
+      - "re.DOTALL"
+      - "re.IGNORECASE"
+
+    # Fallback strategy if delimiter-based summaries are absent (Appendix A1.3)
+    fallback_strategy: "extract_first_sentence"
+
+    # Make sentence splitting explicit (paper states “first sentences” but
+    # does not specify the algorithm; this must be pinned for replication)
+    sentence_segmentation_method: "rule_based_punctuation"  # or "punkt_pt"
+    sentence_terminators:
+      - "."
+      - ";"
+      - ":"
+      - "!"
+      - "?"
+
+    # Make paragraph detection explicit for fallback mode
+    paragraph_start_markers:
+      - "Constatação da Fiscalização"
+      - "Fato"
+
+    # Summary parsing behavior (needed when report_summary_text is not pre-extracted)
+    summary_detection_enabled: true
+    summary_parse_strategy: "use_report_summary_text_if_present_else_detect_in_full_text"
+
+  # 1.2 NATURAL LANGUAGE PROCESSING (NLP)
+  nlp_config:
+    # Normalization explicitly described for dictionary method (Appendix A2)
+    unicode_normalization_form: "NFD"
+    remove_accents: true
+    lower_case: true
+
+    # Tokenization details must be pinned (paper does not specify)
+    remove_punctuation: true
+    tokenization_strategy: "whitespace_and_punctuation"
+
+    # Stemming: paper states Porter Stemmer (Appendix A4); keep explicit
+    stemmer_algorithm: "nltk.stem.PorterStemmer"
+
+    # Dictionary includes tokens and n-grams (Appendix A2)
+    dictionary_ngram_range:
+      - 1
+      - 3
+
+    # Stopwords are explicitly used in the supervised-learning appendix pipeline
+    use_stopwords_for_dictionary_matching: false
+    use_stopwords_for_tfidf: true
+    stopword_language: "portuguese"
+
+  # 1.3 DICTIONARY CONFIGURATION
+  dictionary_config:
+    # Published dictionary resource (Appendix A2 footnote)
+    dictionary_url: "https://github.com/ariedamuco/Audit-reports/blob/master/list-words"
+
+    # Critical for strict reproducibility: pin exact revision externally
+    dictionary_version_pin: null  # e.g., git commit hash if available
+
+    # Matching semantics must be explicit (token match vs substring vs regex)
+    match_mode: "regex_or_ngram_search"
+    severe_rule: "severe_if_any_dictionary_hit"  # Appendix A2 decision rule
+
+  # 1.4 DIMENSIONALITY REDUCTION (PCA)
+  pca_config:
+    # Mandatory standardization (Section 3.1)
+    standardize_features: true
+
+    # Kaiser criterion (Section 3.1)
+    eigenvalue_threshold: 1.0
+
+    # Sanity check consistent with paper narrative (~80% for PC1)
+    expected_pc1_explained_variance: 0.80
+    pc1_explained_variance_tolerance: 0.10
+
+    # Exact PCA inputs used in the paper
+    pca_input_features:
+      - "image_count"
+      - "severe_irregularities_count"
+      - "page_count"
+      - "report_lines_count"
+      - "total_irregularities_count"
+
+    # Output definition
+    index_definition: "pc1_score"
+
+  # 1.5 ECONOMETRICS (VALIDATION / CORRELATES)
+  econometrics_config:
+    # Equation (1) in the paper (state fixed effects)
+    validation_fixed_effects: "state"
+
+    # Robust SE: paper says heteroskedasticity-robust but does not specify HC type;
+    # make it explicit rather than implicit.
+    robust_se_type: "HC1"
+
+    # Human coder agreement samples (Table 1)
+    agreement_rules:
+      strict_agreement: "FF_equals_GT"
+      near_agreement: "abs_FF_minus_GT_leq_1"
+      agreement_outcome_definition: "mean_of_two_coders"
+
+    # CGU log specification (Table 2): handling zeros must be explicit
+    cgu_log_transform:
+      enabled: true
+      transform: "log"
+      zero_handling: "drop_nonpositive"  # alternatives: "log1p"
+
+    # Table 3 distance scaling note
+    distance_scaling:
+      distance_variable: "distance_to_capital_km"
+      scale_factor: 0.001  # km -> (km/1000)
+
+  # 1.6 SUPERVISED LEARNING ROBUSTNESS (Section 5.2; Appendix A4)
+  supervised_learning_config:
+    # Labeling rule described: median split; training restricted to agreement cases
+    label_split_strategy: "median_split"
+    label_definition_source: "human_coded"
+    label_score_definition: "mean_of_two_coders_when_available"
+    training_sample_rule: "use_only_high_agreement_cases"
+
+    # Feature construction: appendix emphasizes bigrams + TF-IDF
+    tfidf_ngram_range:
+      - 2
+      - 2
+    tfidf_norm: "l2"
+    tfidf_use_idf: true
+    tfidf_smooth_idf: true
+
+    # Classifiers explicitly mentioned in the paper text: Logistic Regression and Naive Bayes
+    use_logistic_regression: true
+    use_naive_bayes: true
+
+    # Optional (appendix discusses linear SVM as well)
+    use_linear_svm: true
+
+    # Hyperparameters: not pinned by the paper; must be explicit if you want exact reproducibility
+    classifier_hyperparameters:
+      logistic_regression: null  # explicitly set if not using library defaults
+      naive_bayes: null
+      linear_svm: null
+
+  # 1.7 EXTERNAL RESOURCES
+  external_resources:
+    nltk_downloads:
+      - "stopwords"
+      - "punkt"
+    dataset_citations:
+      ff: "Ferraz and Finan (2011)"
+      gt: "Timmons and Garfias (2015)"
